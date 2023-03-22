@@ -15,9 +15,9 @@ async function main() {
   const dirname = url.fileURLToPath(new URL('.', import.meta.url))
   const pkg = await readPackageUp({ cwd: dirname })
   const version = (pkg && pkg.packageJson && pkg.packageJson.version) || '4'
-  const config = new Conf({ projectName: 'sam' })
+  const config = new Conf({ projectName: 'gptsam' })
 
-  const cli = cac('sam')
+  const cli = cac('gptsam')
   cli
     .command('<prompt>', 'Ask Sam a question without quotes')
     .option('-c, --continue', 'Continue last conversation', {

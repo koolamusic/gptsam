@@ -19,11 +19,9 @@
     "build",
     "bin"
   ],
-  "bin": {
-    "sam": "./bin/index.js"
-  },
+  "bin": "./bin/cli.js",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "scripts": {
     "build": "tsup",
