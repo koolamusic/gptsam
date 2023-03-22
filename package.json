@@ -19,7 +19,9 @@
     "build",
     "bin"
   ],
-  "bin": "./bin/cli.js",
+  "bin": {
+    "sam": "./bin/index.js"
+  },
   "engines": {
     "node": ">=14"
   },
