@@ -2,22 +2,28 @@
 import crypto from 'node:crypto'
 
 import * as url from 'url'
+import chalk from 'chalk'
 import { cac } from 'cac'
 import Conf from 'conf'
 import { readPackageUp } from 'read-pkg-up'
 
 import { ChatGPTAPI } from '../build/index.js'
 
+const TOKEN_KEY = 'token'
+
 async function main() {
   const dirname = url.fileURLToPath(new URL('.', import.meta.url))
   const pkg = await readPackageUp({ cwd: dirname })
   const version = (pkg && pkg.packageJson && pkg.packageJson.version) || '4'
-  const config = new Conf({ projectName: 'chatgpt' })
+  const config = new Conf({ projectName: 'sam' })
 
-  const cli = cac('chatgpt')
+  const cli = cac('sam')
   cli
-    .command('<prompt>', 'Ask ChatGPT a question')
+    .command('<prompt>', 'Ask Sam a question without quotes')
     .option('-c, --continue', 'Continue last conversation', {
+      default: true
+    })
+    .option('-i, --instruct', 'Instruction to follow', {
       default: false
     })
     .option('-d, --debug', 'Enables debug logging', {
@@ -30,13 +36,16 @@ async function main() {
       default: true
     })
     .option('-t, --timeout', 'Timeout in milliseconds')
-    .option('-k, --apiKey <apiKey>', 'OpenAI API key')
+    // .option('-k, --apiKey <apiKey>', 'OpenAI API key')
     .option(
       '-n, --conversationName <conversationName>',
       'Unique name for the conversation'
     )
     .action(async (prompt, options) => {
-      const apiKey = options.apiKey || process.env.OPENAI_API_KEY
+      const apiKey = config.get(TOKEN_KEY) || process.env.OPENAI_API_KEY
+
+      console.log(prompt, options)
+      // const apiKey = "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"
       if (!apiKey) {
         console.error('error: either set OPENAI_API_KEY or use --apiKey\n')
         cli.outputHelp()
@@ -84,7 +93,7 @@ async function main() {
         }
       })
 
-      const res = await api.sendMessage(prompt, {
+      const res = await api.sendMessage(`${prompt}`, {
         conversationId,
         parentMessageId,
         timeoutMs: options.timeout || undefined,
@@ -100,7 +109,7 @@ async function main() {
       if (options.stream) {
         process.stdout.write('\n')
       } else {
-        console.log(res.text)
+        console.log(chalk.gray.bold(res.text))
       }
     })
 
@@ -112,6 +121,19 @@ async function main() {
   cli.command('ls-cache', 'Prints the local message cache path').action(() => {
     console.log(config.path)
   })
+
+
+  /* Configuration to set the openAI key into config */
+  cli.command('setup', 'Setup cli config and keys')
+  .option('-t, --token <token>', 'OpenAI API key')
+  .action( async (options, prompt) => {
+    console.log({ prompt, options})
+
+    config.set(TOKEN_KEY, options.token)
+
+    console.log(chalk.green('Token saved successfully'))
+  })
+
 
   cli.help()
   cli.version(version)

@@ -178,7 +178,7 @@ export class ChatGPTAPI {
           Authorization: `Bearer ${this._apiKey}`
         }
         const body = {
-          max_tokens: maxTokens,
+          max_tokens: 1024,
           ...this._completionParams,
           ...completionParams,
           messages,
