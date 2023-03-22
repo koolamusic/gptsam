@@ -93,7 +93,7 @@ async function main() {
         }
       })
 
-      const res = await api.sendMessage(`${prompt}`, {
+      const res = await api.sendMessage(`"${prompt}"`, {
         conversationId,
         parentMessageId,
         timeoutMs: options.timeout || undefined,
@@ -126,8 +126,8 @@ async function main() {
   /* Configuration to set the openAI key into config */
   cli.command('setup', 'Setup cli config and keys')
   .option('-t, --token <token>', 'OpenAI API key')
-  .action( async (options, prompt) => {
-    console.log({ prompt, options})
+  .action( async (options, setup) => {
+    console.log({ setup, options})
 
     config.set(TOKEN_KEY, options.token)
 
