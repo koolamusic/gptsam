@@ -45,7 +45,6 @@ async function main() {
       const apiKey = config.get(TOKEN_KEY) || process.env.OPENAI_API_KEY
 
       console.log(prompt, options)
-      // const apiKey = "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"
       if (!apiKey) {
         console.error('error: either set OPENAI_API_KEY or use --apiKey\n')
         cli.outputHelp()
